@@ -4,14 +4,23 @@ This project explores a structured reasoning problem in 3D space: assigning lett
 
 ---
 
+## Overview
+
+Each sample contains 6 cubes, each exposing exactly 3 visible faces.  
+The model must assign **18 unique letters (A–R)** across all visible faces while maintaining strict global consistency.
+
+Unlike standard prediction tasks, this problem requires **simultaneous constraint satisfaction across multiple objects**.
+
+---
+
 ## Task Definition
 
 Each sample consists of:
 - 6 cubes  
-- each cube exposes exactly 3 visible faces  
-- each face contains exactly one letter  
+- 3 visible faces per cube  
+- 1 letter per face  
 
-The system must assign **18 unique letters (A–R)** across all visible faces, following a fixed mapping:
+Fixed mapping:
 
 | Cube | Letters |
 |------|--------|
@@ -26,114 +35,113 @@ The system must assign **18 unique letters (A–R)** across all visible faces, f
 
 ## Constraints
 
-The task enforces strict global and local constraints:
+The system must satisfy:
 
 - exactly 3 letters per cube  
-- no duplicated letters across cubes  
+- all 18 letters used exactly once  
+- no duplication  
 - no missing letters  
-- one letter per visible face  
-- consistent spatial assignment across all 6 cubes  
+- consistent assignment across all cubes  
 
-Any violation (duplication, omission, misplacement) is considered a failure.
+Any violation = failure.
 
 ---
 
-## Motivation
+## Why This Task Matters
 
-Modern models often fail on tasks requiring:
+This task highlights a key weakness of modern models:
 
-- global consistency across multiple objects  
-- structured symbolic reasoning  
-- strict constraint satisfaction  
-- spatial coherence  
+> They produce locally correct predictions but fail global consistency.
 
-Although visually simple, this task exposes a key limitation:  
-models tend to make **locally correct but globally inconsistent predictions**.
+Even though the problem is simple:
+- small input  
+- fixed structure  
+- deterministic rules  
+
+Models still struggle because they:
+- treat outputs independently  
+- lack constraint enforcement  
+- fail cross-object reasoning  
 
 ---
 
 ## Dataset
 
-This project uses:
+Used dataset:
 
-👉 https://huggingface.co/datasets/8Planetterraforming/cube_text_constraints
+https://huggingface.co/datasets/8Planetterraforming/cube_text_constraints
 
-The dataset is designed as a **constraint-focused benchmark**, where:
-
-- correctness is deterministic  
-- ambiguity is minimal  
-- failures are clearly measurable  
-- reasoning errors are easy to detect  
+Properties:
+- deterministic correctness  
+- no ambiguity  
+- strict symbolic structure  
+- ideal for reasoning evaluation  
 
 ---
 
 ## Method
 
-This project uses a lightweight neural model designed for structured reasoning.
+We use a compact neural model optimized for:
 
-Key elements:
-- explicit cube-to-letter grouping (A–R per cube)
-- constraint-aware training
-- compact architecture optimized for small model size
+- strict constraint satisfaction  
+- global consistency across objects  
+- minimal parameter footprint  
 
-The focus is on maintaining **global consistency across all cubes**, rather than independent local predictions.
+Key idea:
+Instead of predicting independently, the model learns **structured assignment patterns**.
 
 ---
 
 ## Results
 
-Evaluation on structured cube assignment task:
+### Tiny Model Performance
+- Training accuracy: **100%**
+- Perfect constraint satisfaction on all samples
 
-### Training Performance (TinyModel)
-- Accuracy: **100%** (on training dataset of 6 samples)  
-- All cube-face mappings correctly learned  
+### Observed Failure Modes (General Models)
+- duplicated letters  
+- missing assignments  
+- inconsistent cube mapping  
 
-### Baseline Behavior (Naive / General Models)
-Manual testing shows common failure patterns:
-- inconsistent assignments across cubes  
-- duplicated or missing letters  
-- mixing labels between cube groups  
-
-These failures highlight the difficulty of maintaining global constraints.
+This confirms that **constraint reasoning is the core difficulty**, not perception.
 
 ---
 
 ## Key Insight
 
-The task appears simple locally, but requires strict global coordination.
+> Small structured models can outperform larger general models when constraints are explicit.
 
-Standard models fail because they:
-- treat each face independently  
-- lack constraint enforcement  
-- do not maintain cross-object consistency  
-
-Even a very small structured model can outperform larger general models when constraints are explicitly modeled.
+This task is not about scale — it's about **structure**.
 
 ---
 
 ## Limitations
 
-- evaluation currently limited to small dataset  
-- results reflect memorization rather than full generalization  
-- no testing yet on unseen cube configurations  
+- very small dataset  
+- limited generalization testing  
+- currently closer to memorization than full reasoning  
 
 ---
 
 ## Future Work
 
 - generalization to unseen cube layouts  
-- larger and more diverse datasets  
-- constraint-aware decoding methods  
-- evaluation under limited parameter budgets (Parameter Golf setting)
+- constraint-aware decoding  
+- scaling dataset size  
+- optimization for ultra-small models (Parameter Golf target)
 
 ---
 
-## Status
+## Submission Context
 
-Research prototype — prepared for submission to the OpenAI Parameter Golf challenge.
+This project is a prototype submission for the **OpenAI Parameter Golf challenge**, focused on:
+
+- minimal model size  
+- structured reasoning  
+- constraint-based learning  
 
 ---
 
 ## Goal
 
-To develop a compact model capable of maintaining strict symbolic and spatial consistency in a multi-object 3D environment under strong constraints.
+To demonstrate that **global consistency and symbolic reasoning** can be achieved with extremely small models when structure is explicitly modeled.
